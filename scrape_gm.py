@@ -50,7 +50,7 @@ def main():
             sock = socket.socket()
             sock.connect((config.CARBON_SERVER, int(config.CARBON_PORT)))
             for (data_name, data_value) in data:
-                message = 'popular_times.%s.%s %d %d\n' % (url_name, data_name, data_value, carbon_ts)
+                message = 'popular_times.%s.%s %f %d\n' % (url_name, data_name, data_value, carbon_ts)
                 sock.sendall(message.encode('ascii'))
             sock.close()
 
@@ -150,7 +150,7 @@ def parse_html(html):
                 freq = int(t.split()[-2]) # part at last-2 index is average percent
                 freq_now = int(t.split()[2]) # part at index 2 is the current percent
 
-                return [('average', freq), ('current', freq_now)]
+                return [('average', freq), ('current', freq_now), ('ratio', (100*freq_now)/freq)]
 
             if hour < hour_prev:
                 # increment the day if the hour decreases
