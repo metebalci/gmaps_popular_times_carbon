@@ -86,7 +86,6 @@ def get_html(u,file_name):
     else:
         # requires chromedriver
         options = webdriver.ChromeOptions()
-        #options.add_argument('--start-maximized')
         options.add_argument('--headless')
         # https://stackoverflow.com/a/55152213/2327328
         # I choose German because the time is 24h, less to parse
