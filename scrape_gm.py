@@ -22,17 +22,11 @@ import pandas as pd
 # load local params from config.py
 import config
 
-# gmaps starts their weeks on sunday
-days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
-
 # generate unique runtime for this job
 run_time = datetime.now().strftime('%Y%m%d_%H%M%S')
 
 def main():
     urls = pd.read_csv('urls.csv')
-
-    # write to folder logs to remember the state of the config file
-    urls.to_csv('logs' + os.sep + run_time + '.log', index = False)
 
     url_list = urls.iloc[:, 0].tolist()
     url_name_list = urls.iloc[:, 1].tolist()
@@ -57,7 +51,7 @@ def main():
             sock.connect((config.CARBON_SERVER, int(config.CARBON_PORT)))
             for (data_name, data_value) in data:
                 message = 'popular_times.%s.%s %d %d\n' % (url_name, data_name, data_value, carbon_ts)
-                sock.sendall(message)
+                sock.sendall(message.encode('ascii'))
             sock.close()
 
             print('DONE:', url, run_time)
