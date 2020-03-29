@@ -125,14 +125,11 @@ def get_html(u,file_name):
 def parse_html(html):
     soup = BeautifulSoup(html,features='html.parser')
     pops = soup.find_all('div', {'class': 'section-popular-times-bar'})
-    hour = 0
-    dow = 0
-    data = []
 
     print('len(pops): %d' % len(pops))
 
     for pop in pops:
-        # note that data is stored sunday first, regardless of the local
+
         t = pop['aria-label']
 
         # in german page, aria-label is one of these:
@@ -140,33 +137,11 @@ def parse_html(html):
         # for current hour: Derzeit zu 11 % ausgelastet; normal sind 68 %.
         # for all other hours: Um 13 Uhr zu 60 % ausgelastet.
 
-        hour_prev = hour
-        freq_now = None
-
-        try:
-            # need to check all cases because normal case does not mention the hour
-            if 'normal' not in t:
-                hour = int(t.split()[1]) # part at index 1 is hour, see above
-                freq = int(t.split()[4]) # part at index 4 is average percent
-            else:
-                # the current hour has special text
-                # hour is the previous value + 1
-                hour = hour + 1
-                freq = int(t.split()[-2]) # part at last-2 index is average percent
-                freq_now = int(t.split()[2]) # part at index 2 is the current percent
-
-                return [('average', freq), ('current', freq_now), ('ratio', (100*freq_now)/freq)]
-
-            if hour < hour_prev:
-                # increment the day if the hour decreases
-                dow += 1
-
-        except:
-            # if a day is missing, the line(s) won't be parsable
-            # this can happen if the place is closed on that day
-            # skip them, hope it's only 1 day per line,
-            # and increment the day counter
-            dow += 1
+        if 'normal' in t:
+            print(t)
+            freq = int(t.split()[-2]) # part at last-2 index is average percent
+            freq_now = int(t.split()[2]) # part at index 2 is the current percent
+            return [('average', freq), ('current', freq_now), ('ratio', (100*freq_now)/freq)]
 
     return None
 
