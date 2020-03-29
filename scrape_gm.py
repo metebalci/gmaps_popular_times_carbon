@@ -27,10 +27,16 @@ run_time = datetime.now().strftime('%Y%m%d_%H%M%S')
 
 def main():
     urls = pd.read_csv('urls.csv')
-
+    if len(sys.argv) > 1:
+        selected_name = sys.argv[1]
+    else:
+        selected_name = None
     url_list = urls.iloc[:, 0].tolist()
     url_name_list = urls.iloc[:, 1].tolist()
     for (url, url_name) in zip(url_list, url_name_list):
+        if selected_name is not None and selected_name != url_name:
+            print('omitting: ' + url_name)
+            continue
         print('processing: ' + url)
         print('processing: ' + url_name)
 
